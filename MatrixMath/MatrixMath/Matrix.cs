@@ -21,6 +21,7 @@ namespace MatrixMath
                 this[r][c] = value;
             }
         }
+        public bool IsSquare => (RowCount == ColumnCount);
 
         /// <summary>
         /// Constructor with row and column count inputs.
@@ -111,6 +112,93 @@ namespace MatrixMath
             }
 
             return returnMatrix;
+        }
+
+        /// <summary>
+        /// Solves the equation A x v = y for input vector v and this matrix A
+        /// </summary>
+        /// <param name="vector"> Input "y" vector. </param>
+        /// <returns> Return "v" solution. </returns>
+        public Vector SolveFor(Vector vector)
+        {
+            if (vector.Count() != this.RowCount || !this.IsSquare)
+            {
+                throw new SizeMismatchException();
+            }
+
+            Vector solution = new Vector();
+            float[][] choleskyDecomp = new float[this.RowCount][];
+            for (int i = 0; i < this.RowCount; i++)
+            {
+                choleskyDecomp[i] = new float[i + 1];
+            }
+            choleskyDecomp = CholeskyDecomp(this);
+            try
+            {
+                IEnumerator<float> vectorEnumerator = vector.GetEnumerator();
+                for (int i = 0; i < this.RowCount; i++)
+                {
+                    vectorEnumerator.MoveNext();
+                    solution[i] = vectorEnumerator.Current;
+                    for (int j = 0; j < i; j++)
+                    {
+                        solution[i] -= choleskyDecomp[i][j] * solution[j];
+                    }
+                    solution[i] /= choleskyDecomp[i][i];
+                }
+                for (int i = this.RowCount - 1; i > -1; i--)
+                {
+                    for (int j = i + 1; j < this.ColumnCount; j++)
+                    {
+                        solution[i] -= choleskyDecomp[j][i] * solution[j];
+                    }
+                    solution[i] /= choleskyDecomp[i][i];
+                }
+            }
+            catch (System.DivideByZeroException)
+            {
+                throw new DivideByZeroException("Division by zero in SolveFor()");
+            }
+            return solution;
+        }
+
+        /// <summary>
+        /// Private helper method to get the Cholesky decomp of a matrix for use in matrix equation-solving.
+        /// </summary>
+        /// <returns> Reutrns Cholesky decomp jagged array. </returns>
+        private static float[][] CholeskyDecomp(Matrix matrix)
+        {
+            float[][] decomp = new float[matrix.RowCount][];
+            for (int i = 0; i < matrix.RowCount; i++)
+            {
+                decomp[i] = new float[i + 1];
+            }
+            try
+            {
+                for (int i = 0; i < matrix.RowCount; i++)
+                {
+                    decomp[i][i] = matrix[i][i];
+                    for (int k = 0; k < i; k++)
+                    {
+                        decomp[i][i] -= decomp[i][k] * decomp[i][k];
+                    }
+                    decomp[i][i] = (float)Math.Sqrt((double)decomp[i][i]);
+                    for (int j = i + 1; j < matrix.ColumnCount; j++)
+                    {
+                        decomp[j][i] = matrix[i][j];
+                        for (int k = 0; k < i; k++)
+                        {
+                            decomp[j][i] -= decomp[i][k] * decomp[j][k];
+                        }
+                        decomp[j][i] /= decomp[i][i];
+                    }
+                }
+            }
+            catch (System.DivideByZeroException)
+            {
+                throw new DivideByZeroException("Division by zero in CholeskyDecomp()");
+            }
+            return decomp;
         }
     }
 }
