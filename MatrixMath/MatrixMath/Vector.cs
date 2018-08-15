@@ -8,6 +8,19 @@ namespace MatrixMath
 {
     public class Vector : List<float>
     {
+        public float Magnitude
+        {
+            get
+            {
+                float mag = 0.0f;
+                foreach (float entry in this)
+                {
+                    mag += entry * entry;
+                }
+                return (float)Math.Sqrt((double)mag)
+            }
+        }
+
         /// <summary>
         /// Class constructor for new empty vector
         /// </summary>

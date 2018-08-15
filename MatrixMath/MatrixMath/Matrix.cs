@@ -336,6 +336,7 @@ namespace MatrixMath
             {
                 return false;
             }
+
             //algorithm here
 
             return true;
