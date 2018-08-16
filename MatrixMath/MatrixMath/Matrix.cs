@@ -260,16 +260,25 @@ namespace MatrixMath
             }
 
             solution = new Vector(problem.Count);
+
             float[][] choleskyDecomp = new float[matrix.RowCount][];
             for (int i = 0; i < matrix.RowCount; i++)
             {
                 choleskyDecomp[i] = new float[i + 1];
             }
-            choleskyDecomp = CholeskyDecomp(matrix, out bool isReal);
-            if (!isReal)
+            try
+            {
+                choleskyDecomp = CholeskyDecomp(matrix, out bool isReal);
+                if (!isReal)
+                {
+                    return false;
+                }
+            }
+            catch (DivideByZeroException)
             {
                 return false;
             }
+
             try
             {
                 IEnumerator<float> vectorEnumerator = problem.GetEnumerator();
@@ -296,6 +305,7 @@ namespace MatrixMath
             {
                 return false;
             }
+
             return true;
         }
 
@@ -337,7 +347,56 @@ namespace MatrixMath
                 return false;
             }
 
-            //algorithm here
+            // Get Cholesky decomposition of matrix
+            float[][] choleskyDecomp = new float[matrix.RowCount][];
+            for (int i = 0; i < matrix.RowCount; i++)
+            {
+                choleskyDecomp[i] = new float[i + 1];
+            }
+            try
+            {
+                choleskyDecomp = CholeskyDecomp(matrix, out bool isReal);
+                if (!isReal)
+                {
+                    return false;
+                }
+            }
+            catch (DivideByZeroException)
+            {
+                return false;
+            }
+
+            // Invert Cholesky decomposition
+            for (int i = 0; i < matrix.ColumnCount; i++)
+            {
+                choleskyDecomp[i][i] = 1.0f / choleskyDecomp[i][i];
+                for (int j = i + 1; j < matrix.RowCount; j++)
+                {
+                    float c = 0.0f;
+                    for (int k = 0; k < j; k++)
+                    {
+                        c -= choleskyDecomp[k][i] * choleskyDecomp[j][k];
+                    }
+                    choleskyDecomp[j][i] = c / choleskyDecomp[j][j];
+                }
+            }
+
+            // Convert inverted Cholesky jagged array to Matrix
+            Matrix choleskyDecompInverseMatrix = new Matrix(matrix.RowCount, matrix.ColumnCount);
+            for (int i = 0; i < matrix.RowCount; i++)
+            {
+                for (int j = 0; j < choleskyDecomp[i].Length; j++)
+                {
+                    choleskyDecompInverseMatrix[i][j] = choleskyDecomp[i][j];
+                }
+                for (int j = choleskyDecomp[i].Length; j < matrix.ColumnCount; j++)
+                {
+                    choleskyDecompInverseMatrix[i][j] = 0.0f;
+                }
+            }
+
+            // Calculate matrix inverse from inverted Cholesky decomposition
+            inverse = Matrix.Transpose(choleskyDecompInverseMatrix) * choleskyDecompInverseMatrix;
 
             return true;
         }
@@ -422,7 +481,8 @@ namespace MatrixMath
 
             //algorithm here
 
-            return true;
+            //return true;
+            return false; // Until this function is complete, return false to indicate method failure
         }
         
         /// <summary>
