@@ -22,20 +22,32 @@ namespace MatrixMath
 		}
 
 		/// <summary>
-		/// Public constructor with input Smooting value.
+		/// Public constructor with input dimensionality.
 		/// </summary>
-		public GaussKernel(float smoothing, float mean) : base(smoothing, mean)
+		/// <param name="dimensions"> Kernel dimensionality </param>
+		public GaussKernel(int dimensions) : base(dimensions)
 		{
 		}
 
 		/// <summary>
-		/// Returns probability from this kernal at the input value.
+		/// Returns probability from this kernal at the input N-dimensional location.
 		/// </summary>
-		/// <param name="value"> Location at which to retrieve probability. </param>
+		/// <param name="values"> Location at which to retrieve probability. </param>
 		/// <returns> Probability level. </returns>
-		public override float ProbabilityAt(float value)
+		public override float ProbabilityAt(Vector values)
 		{
-			return (float)((1.0d / (h * Math.Sqrt(2.0d * Math.PI))) * Math.Exp(-0.5d * (value - mu) / h));
+			Matrix valuesT = new Matrix(new List<Vector> { (values - mu) });
+			Matrix valuesMatrix = Matrix.Transpose(valuesT);
+			Matrix invH;
+			float detH;
+			if (Matrix.Inverse(H, out invH) && Matrix.Determinant(H, out detH))
+			{
+				return (float)(1.0d / Math.Sqrt(Math.Pow(2.0d * Math.PI, Dimensions) * detH) * Math.Exp(-0.5d * (valuesT * invH * valuesMatrix)[0, 0]));
+			}
+			else
+			{
+				return base.ProbabilityAt(values);
+			}
 		}
 	}
 }

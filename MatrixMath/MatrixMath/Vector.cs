@@ -33,8 +33,12 @@ namespace MatrixMath
         /// </summary>
         /// <param name="count"> Length of new vector. </param>
         public Vector(int count) : base(count)
-        {
-        }
+		{
+			for (int i = 0; i < count; i++)
+			{
+				this[i] = 0.0f;
+			}
+		}
 
         /// <summary>
         /// Class constructor from existing List of float values

@@ -60,11 +60,25 @@ namespace MatrixMath
             }
         }
 
+		/// <summary>
+		/// Replaces the general List.Add method, adding a check that the new row
+		/// vector has the correct length. If not, throws a SizeMismatchException.
+		/// </summary>
+		/// <param name="newRow"> New row to add to this Matrix. </param>
+		new public void Add(Vector newRow)
+		{
+			if (newRow.Count != this.ColumnCount)
+			{
+				throw new SizeMismatchException();
+			}
+			base.Add(newRow);
+		}
+
         /// <summary>
-        /// Method to add a column to all rows of this matrix
+        /// Method to add a column to all rows of this matrix.
         /// </summary>
         /// <param name="index"> New index of row to be added. </param>
-        public void AddColumn(int index)
+        public void InsertColumn(int index)
         {
             foreach (Vector row in this)
             {
@@ -76,7 +90,7 @@ namespace MatrixMath
         /// Method to remove a column from all rows of this matrix
         /// </summary>
         /// <param name="index"> Index of existing row to be removed. </param>
-        public void RemoveColumn(int index)
+        public void RemoveColumnAt(int index)
         {
             for (int i = 0; i < RowCount; i++)
             {
@@ -229,7 +243,7 @@ namespace MatrixMath
         /// <summary>
         /// Static method to get the transpose of an input matrix
         /// </summary>
-        /// <param name="matrix"> Input matrix</param>
+        /// <param name="matrix"> Input matrix. </param>
         /// <returns> Transposed matrix. </returns>
         public static Matrix Transpose(Matrix matrix)
         {
