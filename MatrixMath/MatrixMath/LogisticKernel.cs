@@ -36,6 +36,10 @@ namespace MatrixMath
 		/// <returns> Probability level. </returns>
 		public override float ProbabilityAt(Vector values)
 		{
+			if (NeedsUpdate)
+			{
+				UpdateSmoothing();
+			}
 			Matrix valuesT = new Matrix(new List<Vector> { (values - mu) });
 			Matrix valuesMatrix = Matrix.Transpose(valuesT);
 			Matrix invH;

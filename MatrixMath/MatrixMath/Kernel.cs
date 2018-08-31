@@ -8,7 +8,8 @@ namespace MatrixMath
 {
 	public class Kernel
 	{
-		// Private objects
+		// Private and Protected objects
+		protected bool NeedsUpdate { get; private set; }
 		private Matrix smoothingCholeskyBase;
 		protected Matrix H;
 		protected Vector mu;
@@ -24,6 +25,7 @@ namespace MatrixMath
 			mu = new Vector();
 			smoothingCholeskyBase = new Matrix();
 			H = smoothingCholeskyBase * Matrix.Transpose(smoothingCholeskyBase);
+			NeedsUpdate = false;
 		}
 
 		/// <summary>
@@ -42,6 +44,17 @@ namespace MatrixMath
 				}
 			}
 			H = smoothingCholeskyBase * Matrix.Transpose(smoothingCholeskyBase);
+			NeedsUpdate = false;
+		}
+
+		/// <summary>
+		/// Method to update the Smoothing matrix from the current smoothingCholeskyBase
+		/// </summary>
+		public void UpdateSmoothing()
+		{
+			H.Clear();
+			H = smoothingCholeskyBase * Matrix.Transpose(smoothingCholeskyBase);
+			NeedsUpdate = false;
 		}
 
 		/// <summary>
@@ -65,8 +78,7 @@ namespace MatrixMath
 				smoothingCholeskyBase[smoothingCholeskyBase.Count - 1][smoothingCholeskyBase.Count - 1] = 1.0f;
 			}
 			mu = new Vector(center);
-			H.Clear();
-			H = smoothingCholeskyBase * Matrix.Transpose(smoothingCholeskyBase);
+			NeedsUpdate = true;
 		}
 
 		/// <summary>
@@ -88,8 +100,7 @@ namespace MatrixMath
 			smoothingCholeskyBase.InsertColumn(smoothingCholeskyBase.Count);
 			smoothingCholeskyBase.Add(new Vector(smoothingCholeskyBase.Count + 1));
 			smoothingCholeskyBase[smoothingCholeskyBase.Count - 1][smoothingCholeskyBase.Count - 1] = 1.0f;
-			H.Clear();
-			H = smoothingCholeskyBase * Matrix.Transpose(smoothingCholeskyBase);
+			NeedsUpdate = true;
 		}
 
 		/// <summary>
@@ -107,8 +118,7 @@ namespace MatrixMath
 			mu.Add(newCenter);
 			smoothingCholeskyBase.InsertColumn(smoothingCholeskyBase.Count);
 			smoothingCholeskyBase.Add(new Vector(row));
-			H.Clear();
-			H = smoothingCholeskyBase * Matrix.Transpose(smoothingCholeskyBase);
+			NeedsUpdate = true;
 		}
 
 		/// <summary>
@@ -128,8 +138,7 @@ namespace MatrixMath
 			mu.RemoveAt(index);
 			smoothingCholeskyBase.RemoveAt(index);
 			smoothingCholeskyBase.RemoveColumnAt(index);
-			H.Clear();
-			H = smoothingCholeskyBase * Matrix.Transpose(smoothingCholeskyBase);
+			NeedsUpdate = true;
 		}
 
 		/// <summary>
@@ -154,8 +163,7 @@ namespace MatrixMath
 			{
 				smoothingCholeskyBase[row.Count - 1][i] = row[i];
 			}
-			H.Clear();
-			H = smoothingCholeskyBase * Matrix.Transpose(smoothingCholeskyBase);
+			NeedsUpdate = true;
 		}
 
 		/// <summary>
