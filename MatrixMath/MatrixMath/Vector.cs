@@ -17,8 +17,16 @@ namespace MatrixMath
                 {
                     mag += entry * entry;
                 }
-                return (float)Math.Sqrt((double)mag)
+				return (float)Math.Sqrt((double)mag);
             }
+			set
+			{
+				float scale = value / (float)Math.Sqrt((this * this));
+				for (int i = 0; i < this.Count; i++)
+				{
+					this[i] *= scale;
+				}
+			}
         }
 
         /// <summary>
@@ -58,7 +66,7 @@ namespace MatrixMath
         /// <param name="vector1"> First vector. </param>
         /// <param name="vector2"> Second vector. </param>
         /// <returns> Dot product scalar value. Throws SizeMismatchException if Vector lengths do not match. </returns>
-        public static float DotProduct(Vector vector1, Vector vector2)
+        public static float operator *(Vector vector1, Vector vector2)
         {
             if (vector1.Count != vector2.Count)
             {
