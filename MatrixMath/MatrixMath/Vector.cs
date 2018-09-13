@@ -44,7 +44,7 @@ namespace MatrixMath
 		{
 			for (int i = 0; i < count; i++)
 			{
-				this[i] = 0.0f;
+				this.Add(0.0f);
 			}
 		}
 
@@ -56,7 +56,7 @@ namespace MatrixMath
         {
             for (int i = 0; i < entries.Count; i++)
             {
-                this[i] = entries[i];
+                this.Add(entries[i]);
             }
         }
 
