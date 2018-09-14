@@ -67,7 +67,7 @@ namespace MatrixMath
 		/// <param name="newRow"> New row to add to this Matrix. </param>
 		new public void Add(Vector newRow)
 		{
-			if (newRow.Count != this.ColumnCount)
+			if (this.RowCount != 0 && newRow.Count != this.ColumnCount)
 			{
 				throw new SizeMismatchException();
 			}
