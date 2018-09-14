@@ -160,7 +160,7 @@ namespace MatrixMath
                 throw new SizeMismatchException();
             }
 
-            Matrix returnMatrix = new Matrix(rightMatrix.ColumnCount, leftMatrix.RowCount);
+            Matrix returnMatrix = new Matrix(leftMatrix.RowCount, rightMatrix.ColumnCount);
             for (int i = 0; i < rightMatrix.ColumnCount; i++)
             {
                 for (int j = 0; j < leftMatrix.RowCount; j++)
