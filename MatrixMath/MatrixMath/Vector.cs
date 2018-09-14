@@ -22,6 +22,10 @@ namespace MatrixMath
 			set
 			{
 				float scale = value / (float)Math.Sqrt((this * this));
+				if (Single.IsNaN(scale))
+				{
+					return;
+				}
 				for (int i = 0; i < this.Count; i++)
 				{
 					this[i] *= scale;
