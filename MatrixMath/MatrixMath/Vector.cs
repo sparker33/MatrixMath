@@ -68,6 +68,28 @@ namespace MatrixMath
             }
         }
 
+		/// <summary>
+		/// Gets the Hadamard product (element-wise products) of two vectors.
+		/// </summary>
+		/// <param name="vector1"> Input Vector 1. </param>
+		/// <param name="vector2"> Input Vector 2. </param>
+		/// <returns> Vector of element-wise products. </returns>
+		public static Vector HadamardProduct(Vector vector1, Vector vector2)
+		{
+			if (vector1.Count != vector2.Count)
+			{
+				throw new SizeMismatchException();
+			}
+
+			Vector product = new Vector(vector1.Count);
+			for (int i = 0; i < vector1.Count; i++)
+			{
+				product[i] = vector1[i] * vector2[i];
+			}
+
+			return product;
+		}
+
         /// <summary>
         /// Method to obtain dot product of two Vectors.
         /// </summary>
